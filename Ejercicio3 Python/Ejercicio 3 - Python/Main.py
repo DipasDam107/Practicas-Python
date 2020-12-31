@@ -77,8 +77,14 @@ def menuLlegada():
     print("-" * 20);
 
 def listarPacientes():
+    hay = False;
     for paciente in pacientes:
         print(str(paciente));
+        hay=True;
+    
+    if(hay is False):
+        print("No hay Pacientes registrados");
+
 
 def regLlegada():
     elegir = False;
@@ -90,6 +96,8 @@ def regLlegada():
             if(op==1 or op==2 or op==3):
                 elegir=True;
                 aniadirPaciente(op);
+                print("\n" * 50);
+                print("Paciente registrado correctamente");
             elif(op==0): 
                 elegir=True;
             else:
@@ -122,7 +130,7 @@ def aniadirPacienteRecetas(dni, nombre, fecha):
     medicinas=[];
     salir=False;
     while salir is False:
-        medicina = input("Dime medicina: ");
+        medicina = input("Dime medicina(Deja vacio para salir): ");
         if(medicina != ""):
             medicinas.append(medicina);
         else:
