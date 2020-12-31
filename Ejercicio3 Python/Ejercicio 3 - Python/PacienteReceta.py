@@ -7,6 +7,12 @@ class PacienteReceta(Paciente.Paciente):
         self.__medicamentos = medicamentos;
 
     def facturar(self):
-        self._Paciente__tarifaFinal = medicamentos.len() * Constantes.Constantes.PRECIO_RECETA;
+        super().atendido();
+        self._Paciente__tarifaFinal = len(self.__medicamentos) * Constantes.Constantes.PRECIO_RECETA;
 
-
+    def __str__(self):
+        try:
+            prefijo=super().__str__();
+            return prefijo + " Tipo: Receta Recetas: "+  str(len(self.__medicamentos));
+        except Exception as e:
+            print(e);

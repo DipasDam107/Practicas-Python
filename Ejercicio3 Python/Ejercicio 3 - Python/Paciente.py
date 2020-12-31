@@ -7,9 +7,12 @@ class Paciente():
         self.__atendido = False;
         self.__tarifaFinal = 0;
 
-    def atendido():
-        self.atendido = True;
+    def atendido(self):
+        self.__atendido = True;
         #hacer calculos
 
     def __str__(self):
-        return "Nombre: ", self.__nombre + " DNI: " + self.__dni;
+        at = "No";
+        if(self.__atendido):
+            at = "Si";
+        return "Nombre: "+ self.__nombre + " DNI: " + self.__dni + " Atendido: " + at ;

@@ -19,7 +19,10 @@
 ###
 
 
-import Paciente;
+from PacienteReceta import PacienteReceta;
+from PacienteConsulta import PacienteConsulta;
+from PacienteRevision import PacienteRevision;
+from Paciente import Paciente;
 import Constantes;
 import datetime;
 from datetime import date;
@@ -30,19 +33,27 @@ pacientes = [];
 def main():
     salir = False;
     while(salir is False):
+        try:
             menu();
             opcion = int(input("Dime Opcion: "));
             print("\n" * 50);
             if(opcion == 1):
                 regLlegada();
             elif(opcion == 2):
-                print("op2");
+                if(llamarConsulta()):
+                    print("Se ha atendido al paciente");
+                else:
+                    print("No hay pacientes en cola");
             elif(opcion == 3):
-                print("op3");
+                print("Se han facturado " + str(consultarTotalFacturado()) + " €");
+            elif(opcion == 4):
+                listarPacientes();
             elif(opcion == 0):
                 salir = True;
             else: 
                 raise exception;
+        except:
+            print("Eleccion incorrecta");
 
     
 
@@ -51,6 +62,7 @@ def menu():
     print("1 - Registrar Llegada");
     print("2 - Llamar a Consulta");
     print("3 - Consultar Total Facturado");
+    print("4 - Listar Pacientes");
     print("0 - Salir");
     print("-" * 20);
 
@@ -64,10 +76,14 @@ def menuLlegada():
     print("0 - Salir");
     print("-" * 20);
 
-  
+def listarPacientes():
+    for paciente in pacientes:
+        print(str(paciente));
+
 def regLlegada():
     elegir = False;
     while(elegir is False):
+        try:
             menuLlegada();
             op=int(input("Dime tipo de Paciente: "))
             print("\n" * 50);
@@ -78,24 +94,63 @@ def regLlegada():
                 elegir=True;
             else:
                 raise Exception;
+        except:
+            print("Eleccion incorrecta");
 
 def aniadirPaciente(op):
     dni = input("Dime DNI: ");
     nombre = input("Dime Nombre: ");
-    fecha = datetime.datetime.strptime(input("Dime Fecha de Nacimiento (DD-MM-AAAA): "), '%d-%m-%Y')
-    fecha = fecha.date();
-    time_difference = relativedelta(fecha, date.today())
-    difference_in_years = abs(time_difference.years);
-    print(difference_in_years);   
+    try:
+        fecha = datetime.datetime.strptime(input("Dime Fecha de Nacimiento (DD-MM-AAAA): "), '%d-%m-%Y')
+        fecha = fecha.date();
+    except:
+        print("Fecha Incorrecta");
 
-def pacienteConsulta():
-    print("Consulta");
+    if(op == 1):
+        aniadirPacienteConsulta(dni,nombre,fecha);
+    elif(op==2):
+        aniadirPacienteRecetas(dni,nombre,fecha);
+    else:
+        aniadirPacienteRevision(dni,nombre,fecha);
 
-def pacienteRecetas():
-    print("Recetas");
 
-def pacienteRevision():
-    print("Revision");
+def aniadirPacienteConsulta(dni, nombre, fecha):
+    motivo = input("Dime motivo de la visita: ");
+    pacientes.append(PacienteConsulta(dni, nombre, fecha, motivo));
+
+def aniadirPacienteRecetas(dni, nombre, fecha):
+    medicinas=[];
+    salir=False;
+    while salir is False:
+        medicina = input("Dime medicina: ");
+        if(medicina != ""):
+            medicinas.append(medicina);
+        else:
+            salir = True;
+    pacientes.append(PacienteReceta(dni, nombre, fecha, medicinas));
+
+def aniadirPacienteRevision(dni, nombre, fecha):
+    try:
+        fechaVisita = datetime.datetime.strptime(input("Dime Fecha de visita anterior (DD-MM-AAAA): "), '%d-%m-%Y')
+        fechaVisita = fechaVisita.date();
+        pacientes.append(PacienteRevision(dni, nombre, fecha, fechaVisita));
+
+    except Exception as e:
+        print("Fecha Incorrecta");
+    
+def llamarConsulta():
+    for paciente in pacientes:
+        if(paciente._Paciente__atendido is False):
+            paciente.facturar();
+            return True;
+    return False;
+
+def consultarTotalFacturado():
+    total=0;
+    for paciente in pacientes:
+        if(paciente._Paciente__atendido):
+            total += paciente._Paciente__tarifaFinal;
+    return total;
 
 if __name__ == "__main__":
     main();
